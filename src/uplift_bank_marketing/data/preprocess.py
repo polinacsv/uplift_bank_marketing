@@ -1,4 +1,7 @@
+import numpy as np
 import pandas as pd
+from sklearn.preprocessing import StandardScaler
+
 
 def process_contact_column(data_in_function):
     """
@@ -85,6 +88,28 @@ def one_hot_encode_multilevel(data_in_function):
     return data_in_function
 
 
+def process_age_column(data_in_function):
+    """
+    Processes the 'age' column:
+    - Bins the continuous 'age' column into age groups.
+    - One-Hot Encodes these age groups as 0/1, removing the reference category (18-25).
+    - Drops the original 'age' column.
+    """
+    if "age" in data_in_function.columns:
+        # Define age bins and labels
+        bins = [18, 25, 35, 45, 55, 65, float("inf")]
+        labels = ["18-25", "26-35", "36-45", "46-55", "56-65", "66+"]
+
+        # Bin the 'age' column
+        data_in_function["age_group"] = pd.cut(data_in_function["age"], bins=bins, labels=labels, right=False)
+
+        # One-Hot Encode the age groups (as 0/1, not boolean)
+        age_dummies = pd.get_dummies(data_in_function["age_group"], prefix="age_group", drop_first=True).astype(int)
+        data_in_function = pd.concat([data_in_function.drop(columns=["age"]), age_dummies], axis=1)
+    
+    return data_in_function
+
+
 def prepare_data(data_in_function):
     """
     Complete data preparation function combining all steps.
@@ -92,9 +117,12 @@ def prepare_data(data_in_function):
     - Handles missing values.
     - Encodes binary columns.
     - One-Hot Encodes multi-level categorical columns.
+    - Bins and encodes the 'age' column.
     """
     data_in_function = process_contact_column(data_in_function)
     data_in_function = handle_missing_values(data_in_function)
     data_in_function = encode_binary_columns(data_in_function)
     data_in_function = one_hot_encode_multilevel(data_in_function)
+    data_in_function = process_age_column(data_in_function)
+    
     return data_in_function
