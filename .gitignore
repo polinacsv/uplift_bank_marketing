@@ -1,0 +1,56 @@
+# Ignore Build and Installation Directories
+build/
+dist/
+*.egg-info/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Ignore Jupyter Notebook Checkpoints
+.ipynb_checkpoints
+
+# VS Code Project Settings
+.vscode/
+
+# Ignore Log Files
+*.log
+
+# Ignore Test Artifacts
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Ignore Package Metadata Files
+src/uplift_bank_marketing/*.txt
+src/uplift_bank_marketing/*.egg-info
+src/uplift_bank_marketing/__pycache__/
+
+# Ignore Machine-Specific Files
+.DS_Store
+Thumbs.db
+
+# Data
+
+src/uplift_bank_marketing/data/X_bank_marketing.csv
+src/uplift_bank_marketing/data/y_bank_marketing.csv
+src/uplift_bank_marketing/data/metadata.txt
+src/uplift_bank_marketing/data/variables.txt
