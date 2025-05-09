@@ -110,6 +110,38 @@ def process_age_column(data_in_function):
     return data_in_function
 
 
+def process_day_of_month_column(data_in_function):
+    """
+    Processes the 'day_of_week' column (actually day of the month).
+    - Bins it into early, mid, and late periods.
+    - Creates binary columns for these periods with 0/1 values.
+    - Drops the original 'day_of_week' column.
+    - Drops the first category to avoid multicollinearity.
+    """
+    if "day_of_week" in data_in_function.columns:
+        # Define custom bins: early, mid, late (1-31)
+        bins = [1, 10, 20, 31]
+        labels = ["early_month", "mid_month", "late_month"]
+        
+        # Bin the days into these categories
+        data_in_function['day_of_month_period'] = pd.cut(
+            data_in_function['day_of_week'], bins=bins, labels=labels, right=True
+        )
+
+        # One-Hot Encode the periods with 0/1 and drop first category
+        period_dummies = pd.get_dummies(
+            data_in_function['day_of_month_period'], 
+            prefix="day_of_month", 
+            drop_first=True
+        ).astype(int)
+        
+        # Combine and clean up
+        data_in_function = pd.concat([data_in_function.drop(columns=['day_of_week', 'day_of_month_period']), 
+                                      period_dummies], axis=1)
+    
+    return data_in_function
+
+
 def prepare_data(data_in_function):
     """
     Complete data preparation function combining all steps.
@@ -118,11 +150,15 @@ def prepare_data(data_in_function):
     - Encodes binary columns.
     - One-Hot Encodes multi-level categorical columns.
     - Bins and encodes the 'age' column.
+    - Processes the 'balance' column (negative flag, log transform, standardize).
+    - Processes the 'day_of_week' (actually day of the month) column (binned with 0/1, drop first).
     """
     data_in_function = process_contact_column(data_in_function)
     data_in_function = handle_missing_values(data_in_function)
     data_in_function = encode_binary_columns(data_in_function)
     data_in_function = one_hot_encode_multilevel(data_in_function)
     data_in_function = process_age_column(data_in_function)
+    data_in_function = process_balance_column(data_in_function)
+    data_in_function = process_day_of_month_column(data_in_function)
     
     return data_in_function
