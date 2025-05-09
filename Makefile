@@ -34,3 +34,16 @@ data:
 
 setup-full: clean build install data
 	@echo "Project fully set up, data loaded!"
+
+# Setup Git pre-commit hook for auto-clearing Jupyter Notebook outputs
+install-precommit:
+	@echo "#!/bin/bash" > .git/hooks/pre-commit
+	@echo "echo 'Clearing Jupyter Notebook outputs...'" >> .git/hooks/pre-commit
+	@echo "nbstripout --install" >> .git/hooks/pre-commit
+	@echo "find . -name '*.ipynb' -exec nbstripout {} \;" >> .git/hooks/pre-commit
+	@chmod +x .git/hooks/pre-commit
+	@echo "Pre-commit hook for clearing notebook outputs installed."
+
+# Clear notebook outputs manually
+clear-notebook-output:
+	find . -name '*.ipynb' -exec nbstripout {} \;
